@@ -1,4 +1,4 @@
-import express, { NextFunction } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import Tour from '../models/tourModel';
 import APIFeatures from '../utils/apiFeatures';
 import catchAsync from '../utils/catchAsync';
@@ -6,10 +6,10 @@ import AppError from '../utils/appError';
 
 // Route Handlers
 // Alias Top Tours
-const aliasTopTours = (
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
+export const aliasTopTours = (
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
   req.query.limit = '5';
   req.query.sort = '-ratingsAverage, price';
@@ -18,8 +18,8 @@ const aliasTopTours = (
 };
 
 // Get All Tours
-const getAllTours = catchAsync(
-  async (req: express.Request, res: express.Response, next: NextFunction) => {
+export const getAllTours = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     // Execute query
     const feature = await new APIFeatures(Tour.find(), req.query)
       .filter()
@@ -38,8 +38,8 @@ const getAllTours = catchAsync(
 );
 
 // Get Tour by ID
-const getTourById = catchAsync(
-  async (req: express.Request, res: express.Response, next: NextFunction) => {
+export const getTourById = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const tour = await Tour.findById(req.params.id);
     // Tour.findOne({ _id: req.params.id });
 
@@ -50,8 +50,8 @@ const getTourById = catchAsync(
 );
 
 // Create Tour
-const createTour = catchAsync(
-  async (req: express.Request, res: express.Response, next: NextFunction) => {
+export const createTour = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const newTour = await Tour.create(req.body);
 
     res.status(201).json({ status: 'success', data: { tour: newTour } });
@@ -59,8 +59,8 @@ const createTour = catchAsync(
 );
 
 // Update Tour
-const updateTour = catchAsync(
-  async (req: express.Request, res: express.Response, next: NextFunction) => {
+export const updateTour = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -73,8 +73,8 @@ const updateTour = catchAsync(
 );
 
 // Delete Tour
-const deleteTour = catchAsync(
-  async (req: express.Request, res: express.Response, next: NextFunction) => {
+export const deleteTour = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const tour = await Tour.findByIdAndDelete(req.params.id);
 
     if (!tour) return next(new AppError('No tour found with that ID', 404));
@@ -83,8 +83,8 @@ const deleteTour = catchAsync(
   }
 );
 
-const getTourStats = catchAsync(
-  async (req: express.Request, res: express.Response, next: NextFunction) => {
+export const getTourStats = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const stats = await Tour.aggregate([
       {
         $match: { ratingsAverage: { $gte: 4.5 } },
@@ -110,8 +110,8 @@ const getTourStats = catchAsync(
   }
 );
 
-const getMonthlyPlan = catchAsync(
-  async (req: express.Request, res: express.Response, next: NextFunction) => {
+export const getMonthlyPlan = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
     const year = +req.params.year; //
 
     const plan = await Tour.aggregate([
@@ -152,14 +152,3 @@ const getMonthlyPlan = catchAsync(
     res.status(200).json({ status: 'success', data: { plan } });
   }
 );
-
-export {
-  aliasTopTours,
-  getAllTours,
-  getTourById,
-  createTour,
-  updateTour,
-  deleteTour,
-  getTourStats,
-  getMonthlyPlan,
-};

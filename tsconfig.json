@@ -1,9 +1,11 @@
 {
   "include": ["src/**/*"],
   "files": [
+    "./@types/index.d.ts",
     "./app.ts",
     "./controllers/tourController.ts",
-    "./@types/index.d.ts"
+    "./controllers/authController.ts",
+    "./models/userModel.ts"
   ],
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */

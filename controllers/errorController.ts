@@ -1,4 +1,4 @@
-import express from 'express';
+import { Request, Response, NextFunction } from 'express';
 import AppError from '../utils/appError';
 
 const handleCastErrorDB = (err: AppErrorType) => {
@@ -7,12 +7,7 @@ const handleCastErrorDB = (err: AppErrorType) => {
 };
 
 const handleDuplicateFieldsDB = (err: AppErrorType) => {
-  const value = err.message
-    .match(/(["'])(\\?.)*?\1/)
-    ?.at(0)
-    ?.replace(/"/g, '');
-  console.log(value);
-  const message = `Duplicate field value: ${value}. Please use another value!`;
+  const message = `Duplicate field value: ${err.keyValue?.name}. Please use another value!`;
   return new AppError(message, 400);
 };
 
@@ -30,7 +25,7 @@ const handleJWTError = () =>
 const handleJWTExpiredError = () =>
   new AppError('Your token has expired! Please log in again!', 401);
 
-const sendErrorDev = (err: AppErrorType, res: express.Response) => {
+const sendErrorDev = (err: AppErrorType, res: Response) => {
   res.status(err.statusCode).json({
     status: err.status,
     error: err,
@@ -39,7 +34,7 @@ const sendErrorDev = (err: AppErrorType, res: express.Response) => {
   });
 };
 
-const sendErrorProd = (err: AppErrorType, res: express.Response) => {
+const sendErrorProd = (err: AppErrorType, res: Response) => {
   // Operational, trusted error: send message to client
   if (err.isOperational)
     res.status(err.statusCode).json({
@@ -61,9 +56,9 @@ const sendErrorProd = (err: AppErrorType, res: express.Response) => {
 
 export default (
   err: AppErrorType,
-  req: express.Request,
-  res: express.Response,
-  next: express.NextFunction
+  _req: Request,
+  res: Response,
+  _next: NextFunction
 ) => {
   err.statusCode = err.statusCode || 500; // 500 = Internal Server Error
   err.status = err.status || 'error';

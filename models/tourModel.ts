@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import slugify from 'slugify';
-import validator from 'validator';
 
 const tourSchema = new mongoose.Schema(
   {
@@ -122,5 +121,5 @@ tourSchema.pre<TourSchema>(
   }
 );
 
-const Tour = mongoose.model('Tour', tourSchema);
+const Tour = mongoose.model<TourSchema>('Tour', tourSchema);
 export default Tour;

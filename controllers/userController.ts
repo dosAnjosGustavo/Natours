@@ -1,17 +1,25 @@
-import express from 'express';
+import { Request, Response, NextFunction } from 'express';
+import User from '../models/userModel';
+import catchAsync from '../utils/catchAsync';
 
 // Route Handlers
 
 // Get All Users
-const getAllUsers = (req: express.Request, res: express.Response) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined',
-  });
-};
+export const getAllUsers = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const users = await User.find();
+
+    // Send response
+    res.status(200).json({
+      status: 'success',
+      results: users.length,
+      data: { users },
+    });
+  }
+);
 
 // Get User by ID
-const getUserById = (req: express.Request, res: express.Response) => {
+export const getUserById = (req: Request, res: Response) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not yet defined',
@@ -19,7 +27,7 @@ const getUserById = (req: express.Request, res: express.Response) => {
 };
 
 // Create User
-const createUser = (req: express.Request, res: express.Response) => {
+export const createUser = (req: Request, res: Response) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not yet defined',
@@ -27,7 +35,7 @@ const createUser = (req: express.Request, res: express.Response) => {
 };
 
 // Update User
-const updateUser = (req: express.Request, res: express.Response) => {
+export const updateUser = (req: Request, res: Response) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not yet defined',
@@ -35,11 +43,9 @@ const updateUser = (req: express.Request, res: express.Response) => {
 };
 
 // Delete User
-const deleteUser = (req: express.Request, res: express.Response) => {
+export const deleteUser = (req: Request, res: Response) => {
   res.status(500).json({
     status: 'error',
     message: 'This route is not yet defined',
   });
 };
-
-export { getAllUsers, getUserById, createUser, updateUser, deleteUser };
