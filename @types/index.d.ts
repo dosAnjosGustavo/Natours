@@ -29,42 +29,6 @@ type AppErrorType = {
   };
 };
 
-// Tour
-type TourTypeBlueprint = {
-  name: string;
-  duration: number;
-  maxGroupSize: number;
-  difficulty: string;
-  ratingsAverage: number;
-  ratingsQuantity: number;
-  price: number;
-  summary: string;
-  description: string;
-  imageCover: string;
-  images: string[];
-  startDates: string[];
-};
-
-type Tour = TourTypeBlueprint & { id: number };
-
-type TourSchema = mongoose.Document &
-  TourTypeBlueprint & {
-    priceDiscount?: number;
-    createdAt: Date;
-  };
-
-// User, Authentication and Authorization
-type User = {
-  name: string;
-  email: string;
-  photo: string;
-  password: string;
-  passwordConfirm: string;
-  passwordChangedAt?: Date;
-};
-
-type UserSchema = mongoose.Document & User;
-
 type JWTLoginType = {
   id: string;
   iat: number;

@@ -47,7 +47,7 @@ const tourSchema = new mongoose.Schema(
     priceDiscount: {
       type: Number,
       validate: {
-        validator: function (this: TourSchema, val: number) {
+        validator: function (this: any, val: number) {
           // this only points to current doc on NEW document creation
           return val < this.price;
         },
@@ -86,34 +86,34 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
-tourSchema.virtual('durationWeeks').get(function (this: TourSchema) {
+tourSchema.virtual('durationWeeks').get(function (this: any) {
   return this.duration / 7;
 });
 
 // DOCUMENT MIDDLEWARE: runs only before .save() and .create()
-tourSchema.pre<TourSchema>('save', function (next) {
+tourSchema.pre<any>('save', function (next) {
   // this points to the current query
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
 // QUERY MIDDLEWARE
-tourSchema.pre<TourSchema>(/^find/, function (next) {
+tourSchema.pre<any>(/^find/, function (next) {
   // this points to the current query
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
   next();
 });
 
-tourSchema.post<TourSchema>(/^find/, function (docs, next) {
+tourSchema.post<any>(/^find/, function (docs, next) {
   console.log(`Query took ${Date.now() - this.start} milliseconds`);
   next();
 });
 
 // AGGREGATION MIDDLEWARE
-tourSchema.pre<TourSchema>(
+tourSchema.pre<any>(
   'aggregate',
-  function (this: mongoose.Aggregate<TourSchema>, next) {
+  function (this: mongoose.Aggregate<any>, next) {
     // this points to the current aggregation object
     this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
     console.log(this.pipeline());
@@ -121,5 +121,5 @@ tourSchema.pre<TourSchema>(
   }
 );
 
-const Tour = mongoose.model<TourSchema>('Tour', tourSchema);
+const Tour = mongoose.model<any>('Tour', tourSchema);
 export default Tour;
