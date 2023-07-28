@@ -9,9 +9,10 @@ import crypto from 'crypto';
 import { CustomRequest } from '../@types/merged';
 
 export const signToken = (id: string) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET!, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
+  const jwtSecret = process.env.JWT_SECRET!;
+  const expiresIn = process.env.JWT_EXPIRES_IN!;
+
+  return jwt.sign({ id }, jwtSecret, { expiresIn });
 };
 
 const createSendToken = (user: any, statusCode: number, res: Response) => {
@@ -19,6 +20,15 @@ const createSendToken = (user: any, statusCode: number, res: Response) => {
 
   // Remove password from output
   user.password = undefined;
+
+  const jwtCookiesExpiresIn = +process.env.JWT_COOKIE_EXPIRES_IN!;
+  const oneDay = 24 * 60 * 60 * 1000;
+
+  res.cookie('jwt', token, {
+    expires: new Date(Date.now() + jwtCookiesExpiresIn * oneDay),
+    secure: process.env.NODE_ENV === 'production' ? true : undefined, // set to true in production
+    httpOnly: true,
+  });
 
   res.status(statusCode).json({
     status: 'success',
