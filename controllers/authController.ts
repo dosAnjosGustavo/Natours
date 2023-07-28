@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
 import sendEmail from '../utils/email';
 import crypto from 'crypto';
+import { CustomRequest } from '../@types/merged';
 
 export const signToken = (id: string) => {
   return jwt.sign({ id }, process.env.JWT_SECRET!, {
@@ -65,12 +66,8 @@ export const login = catchAsync(
   }
 );
 
-type CustomRequest = Request & {
-  user?: any;
-};
-
 export const protect = catchAsync(
-  async (req: CustomRequest, res: Response, next: NextFunction) => {
+  async (req: CustomRequest, _res: Response, next: NextFunction) => {
     // 1) Getting token and check of it's there
     let token: string | undefined;
     if (req.headers.authorization?.startsWith('Bearer'))

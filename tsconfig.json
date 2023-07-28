@@ -2,6 +2,7 @@
   "include": ["src/**/*"],
   "files": [
     "./@types/index.d.ts",
+    "./@types/merged.d.ts",
     "./app.ts",
     "./controllers/tourController.ts",
     "./controllers/authController.ts",

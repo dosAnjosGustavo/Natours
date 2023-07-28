@@ -8,7 +8,7 @@ import AppError from '../utils/appError';
 // Alias Top Tours
 export const aliasTopTours = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   req.query.limit = '5';
@@ -19,7 +19,7 @@ export const aliasTopTours = (
 
 // Get All Tours
 export const getAllTours = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     // Execute query
     const feature = await new APIFeatures(Tour.find(), req.query)
       .filter()
@@ -51,7 +51,7 @@ export const getTourById = catchAsync(
 
 // Create Tour
 export const createTour = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     const newTour = await Tour.create(req.body);
 
     res.status(201).json({ status: 'success', data: { tour: newTour } });
@@ -84,7 +84,7 @@ export const deleteTour = catchAsync(
 );
 
 export const getTourStats = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response, _next: NextFunction) => {
     const stats = await Tour.aggregate([
       {
         $match: { ratingsAverage: { $gte: 4.5 } },
@@ -111,7 +111,7 @@ export const getTourStats = catchAsync(
 );
 
 export const getMonthlyPlan = catchAsync(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, _next: NextFunction) => {
     const year = +req.params.year; //
 
     const plan = await Tour.aggregate([
