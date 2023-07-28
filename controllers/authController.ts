@@ -13,6 +13,21 @@ export const signToken = (id: string) => {
   });
 };
 
+const createSendToken = (user: any, statusCode: number, res: Response) => {
+  const token = signToken(user._id);
+
+  // Remove password from output
+  user.password = undefined;
+
+  res.status(statusCode).json({
+    status: 'success',
+    token,
+    data: {
+      user,
+    },
+  });
+};
+
 export const signup = catchAsync(
   async (req: Request, res: Response, _next: NextFunction) => {
     const newUser = await User.create({
@@ -25,15 +40,7 @@ export const signup = catchAsync(
       role: req.body.role,
     });
 
-    const token = signToken(newUser._id);
-
-    res.status(201).json({
-      status: 'success',
-      token,
-      data: {
-        user: newUser,
-      },
-    });
+    createSendToken(newUser, 201, res);
   }
 );
 
@@ -54,12 +61,7 @@ export const login = catchAsync(
       return next(new AppError('Incorrect email or password', 401));
 
     // 3) If everything ok, send token to client
-    const token = signToken(user._id);
-
-    res.status(200).json({
-      status: 'success',
-      token,
-    });
+    createSendToken(user, 200, res);
   }
 );
 
@@ -194,11 +196,26 @@ export const resetPassword = catchAsync(
     // 3) Update changedPasswordAt property for the user
 
     // 4) Log the user in, send JWT
-    const token = signToken(user._id);
+    createSendToken(user, 200, res);
+  }
+);
 
-    res.status(200).json({
-      status: 'success',
-      token,
-    });
+export const updatePassword = catchAsync(
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
+    // 1) Get user from collection
+    const user = await User.findById(req.user.id).select('+password');
+
+    // 2) Check if POSTed current password is correct
+    if (!(await user.correctPassword(req.body.passwordCurrent, user.password)))
+      return next(new AppError('Your current password is wrong.', 401));
+
+    // 3) If so, update password
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await user.save();
+    // User.findByIdAndUpdate will NOT work as intended!
+
+    // 4) Log user in, send JWT
+    createSendToken(user, 200, res);
   }
 );
