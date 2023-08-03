@@ -15,7 +15,7 @@ const filterObj = (obj: any, ...allowedFields: string[]) => {
 
 // Get All Users
 export const getAllUsers = catchAsync(
-  async (req: Request, res: Response, _next: NextFunction) => {
+  async (_req: Request, res: Response, _next: NextFunction) => {
     const users = await User.find();
 
     // Send response

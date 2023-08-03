@@ -9,13 +9,11 @@ const DB = process.env.DATABASE!.replace(
   '<PASSWORD>',
   process.env.DATABASE_PASSWORD!
 );
-mongoose.connect(DB).then((con) => console.log('DB connection successful!'));
+mongoose.connect(DB).then((_con) => console.log('DB connection successful!'));
 
 // Read JSON file
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8')
-);
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, 'utf-8'));
 
 // Import data into DB
 const importData = async () => {

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import slugify from 'slugify';
+// import User from './userModel';
 
 const tourSchema = new mongoose.Schema(
   {
@@ -79,6 +80,31 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      // GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number], // Longitude first, latitude second
+      description: String,
+    },
+    locations: [
+      // Embedded documents
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   },
   {
     toJSON: { virtuals: true },
@@ -97,6 +123,13 @@ tourSchema.pre<any>('save', function (next) {
   next();
 });
 
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(async (id) => User.findById(id));
+//   this.guides = await Promise.all(guidesPromises);
+
+//   next();
+// });
+
 // QUERY MIDDLEWARE
 tourSchema.pre<any>(/^find/, function (next) {
   // this points to the current query
@@ -110,16 +143,21 @@ tourSchema.post<any>(/^find/, function (docs, next) {
   next();
 });
 
+tourSchema.pre<any>(/^find/, function (next) {
+  this.populate({
+    path: 'guides',
+    select: '-__v -passwordChangedAt',
+  });
+  next();
+});
+
 // AGGREGATION MIDDLEWARE
-tourSchema.pre<any>(
-  'aggregate',
-  function (this: mongoose.Aggregate<any>, next) {
-    // this points to the current aggregation object
-    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-    console.log(this.pipeline());
-    next();
-  }
-);
+tourSchema.pre('aggregate', function (next) {
+  // this points to the current aggregation object
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  console.log(this.pipeline());
+  next();
+});
 
 const Tour = mongoose.model<any>('Tour', tourSchema);
 export default Tour;

@@ -20,7 +20,7 @@ router
 
 router
   .route(ID)
-  .get(tourController.getTourById)
+  .get(tourController.getTour)
   .patch(tourController.updateTour)
   .delete(
     authController.protect,
