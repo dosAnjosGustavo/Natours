@@ -11,7 +11,8 @@ import AppError from './utils/appError';
 import globalErrorHandler from './controllers/errorController';
 import tourRouter from './routes/tourRoutes';
 import userRouter from './routes/userRoutes';
-import { ROOT, TOURS, USERS } from './routes/variables';
+import reviewRouter from './routes/reviewRoutes';
+import { ROOT, TOURS, USERS, REVIEWS } from './routes/variables';
 
 const app = express();
 
@@ -59,6 +60,7 @@ app.use(express.static(`${__dirname}/public`));
 // Routes
 app.use(ROOT + TOURS, tourRouter);
 app.use(ROOT + USERS, userRouter);
+app.use(ROOT + REVIEWS, reviewRouter);
 
 app.all('*', (req, _res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));

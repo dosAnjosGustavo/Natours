@@ -2,10 +2,13 @@ import express from 'express';
 import { ID } from './variables';
 import * as tourController from '../controllers/tourController';
 import * as authController from '../controllers/authController';
+import reviewRouter from './reviewRoutes';
 
 const router = express.Router();
 
 // router.param('id', tourController.checkId);
+
+router.use('/:tourId/reviews', reviewRouter);
 
 router
   .route('/top-5-cheap')
