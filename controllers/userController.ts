@@ -14,7 +14,14 @@ const filterObj = (obj: any, ...allowedFields: string[]) => {
   return newObj;
 };
 
-// Get All Users
+export const getMe = (
+  req: CustomRequest,
+  _res: Response,
+  next: NextFunction
+) => {
+  req.params.id = req.user.id;
+  next();
+};
 
 export const updateMe = catchAsync(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
