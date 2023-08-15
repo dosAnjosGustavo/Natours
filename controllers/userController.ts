@@ -1,8 +1,9 @@
+import { CustomRequest } from '../@types/merged';
 import { Request, Response, NextFunction } from 'express';
 import User from '../models/userModel';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
-import { CustomRequest } from '../@types/merged';
+import * as factory from './handlerFactory';
 
 // Route Handlers
 const filterObj = (obj: any, ...allowedFields: string[]) => {
@@ -14,18 +15,6 @@ const filterObj = (obj: any, ...allowedFields: string[]) => {
 };
 
 // Get All Users
-export const getAllUsers = catchAsync(
-  async (_req: Request, res: Response, _next: NextFunction) => {
-    const users = await User.find();
-
-    // Send response
-    res.status(200).json({
-      status: 'success',
-      results: users.length,
-      data: { users },
-    });
-  }
-);
 
 export const updateMe = catchAsync(
   async (req: CustomRequest, res: Response, next: NextFunction) => {
@@ -58,6 +47,7 @@ export const updateMe = catchAsync(
   }
 );
 
+// User deleting himself
 export const deleteMe = catchAsync(
   async (req: CustomRequest, res: Response, _next: NextFunction) => {
     await User.findByIdAndUpdate(req.user.id, { active: false });
@@ -69,34 +59,16 @@ export const deleteMe = catchAsync(
   }
 );
 
-// Get User by ID
-export const getUserById = (_req: Request, res: Response) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined',
-  });
-};
-
 // Create User
 export const createUser = (_req: Request, res: Response) => {
   res.status(500).json({
     status: 'error',
-    message: 'This route is not yet defined',
+    message: 'This route is not defined! Please use /signup instead.',
   });
 };
 
-// Update User
-export const updateUser = (_req: Request, res: Response) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined',
-  });
-};
-
-// Delete User
-export const deleteUser = (_req: Request, res: Response) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'This route is not yet defined',
-  });
-};
+export const getUser = factory.getOne(User);
+export const getAllUsers = factory.getAll(User);
+// Do NOT update passwords with this!
+export const updateUser = factory.updateOne(User);
+export const deleteUser = factory.deleteOne(User);
