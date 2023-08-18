@@ -50,29 +50,25 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre<any>('save', async function (next) {
+userSchema.pre('save', async function (next) {
   // Only run this function if password was actually modified
   if (!this.isModified('password')) return next();
 
-  // Hash the password with cost of 12
-  this.password = await bcrypt.hash(this.password, 12);
-
-  // Delete passwordConfirm field
+  if (this.password) this.password = await bcrypt.hash(this.password, 12);
   this.passwordConfirm = undefined;
+
   next();
 });
 
-userSchema.pre<any>('save', function (next) {
-  console.log(typeof this);
+userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
 
-  // - 1 second to make sure the token is always created after the password has been changed
-  this.passwordChangedAt = Date.now() - 1000;
+  this.passwordChangedAt = new Date(Date.now() - 1000);
   next();
 });
 
-userSchema.pre<any>(/^find/, function (next) {
-  // this points to the current query
+userSchema.pre(/^find/, function (next) {
+  // @ts-ignore
   this.find({ active: { $ne: false } });
   next();
 });
@@ -109,5 +105,5 @@ userSchema.methods.createPasswordResetToken = function () {
 
   return resetToken;
 };
-const User = mongoose.model<any>('User', userSchema);
+const User = mongoose.model('User', userSchema);
 export default User;

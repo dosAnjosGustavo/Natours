@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import slugify from 'slugify';
-// import User from './userModel';
 
 const tourSchema = new mongoose.Schema(
   {
@@ -112,7 +111,6 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
-// tourSchema.index({ price: 1 });
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
 
@@ -120,41 +118,27 @@ tourSchema.virtual('durationWeeks').get(function (this: any) {
   return this.duration / 7;
 });
 
-// Virtual populate
 tourSchema.virtual('reviews', {
   ref: 'Review',
   foreignField: 'tour',
   localField: '_id',
 });
 
-// DOCUMENT MIDDLEWARE: runs only before .save() and .create()
 tourSchema.pre<any>('save', function (next) {
-  // this points to the current query
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
-// tourSchema.pre('save', async function (next) {
-//   const guidesPromises = this.guides.map(async (id) => User.findById(id));
-//   this.guides = await Promise.all(guidesPromises);
-
-//   next();
-// });
-
-// QUERY MIDDLEWARE
-tourSchema.pre<any>(/^find/, function (next) {
-  // this points to the current query
+tourSchema.pre(/^find/, function (next) {
+  // @ts-ignore
   this.find({ secretTour: { $ne: true } });
+  // @ts-ignore
   this.start = Date.now();
   next();
 });
 
-tourSchema.post<any>(/^find/, function (docs, next) {
-  console.log(`Query took ${Date.now() - this.start} milliseconds`);
-  next();
-});
-
-tourSchema.pre<any>(/^find/, function (next) {
+tourSchema.pre(/^find/, function (next) {
+  // @ts-ignore
   this.populate({
     path: 'guides',
     select: '-__v -passwordChangedAt',
@@ -162,9 +146,13 @@ tourSchema.pre<any>(/^find/, function (next) {
   next();
 });
 
-// AGGREGATION MIDDLEWARE
+tourSchema.post(/^find/, function (next) {
+  // @ts-ignore
+  console.log(`Query took ${Date.now() - this.start} milliseconds`);
+  next();
+});
+
 tourSchema.pre('aggregate', function (next) {
-  // this points to the current aggregation object
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   console.log(this.pipeline());
   next();
