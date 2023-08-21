@@ -3,7 +3,27 @@ import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 
-const userSchema = new mongoose.Schema({
+type Role = 'user' | 'guide' | 'lead-guide' | 'admin';
+export type UserDocument = mongoose.Document & {
+  name: string;
+  email: string;
+  photo: string;
+  role: Role;
+  password: string;
+  passwordConfirm?: string;
+  passwordChangedAt?: Date;
+  passwordResetToken?: string;
+  passwordResetExpiresAt?: Date;
+  active: boolean;
+  correctPassword: (
+    candidatePassword: string,
+    userPassword: string
+  ) => Promise<boolean>;
+  changedPasswordAfter: (JWTTimestamp: number) => boolean;
+  createPasswordResetToken: () => string;
+};
+
+const userSchema = new mongoose.Schema<UserDocument>({
   name: {
     type: String,
     required: [true, 'Please tell us your name'],
@@ -34,7 +54,8 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Please confirm your password'],
     validate: {
       // This only works on CREATE and SAVE
-      validator: function (this: any, el: string) {
+      validator: function (el: string): boolean {
+        // @ts-ignore
         return el === this.password;
       },
       message: 'Passwords are not the same!',
@@ -42,7 +63,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordChangedAt: { type: Date },
   passwordResetToken: { type: String },
-  passwordResetExpires: { type: Date },
+  passwordResetExpiresAt: { type: Date },
   active: {
     type: Boolean,
     default: true,
@@ -105,5 +126,5 @@ userSchema.methods.createPasswordResetToken = function () {
 
   return resetToken;
 };
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model<UserDocument>('User', userSchema);
 export default User;

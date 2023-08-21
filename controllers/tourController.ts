@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Tour from '../models/tourModel';
 import catchAsync from '../utils/catchAsync';
 import * as factory from './handlerFactory';
+import AppError from '../utils/appError';
 
 // Route Handlers
 export const getAllTours = factory.getAll(Tour);
@@ -88,5 +89,66 @@ export const getMonthlyPlan = catchAsync(
     ]);
 
     res.status(200).json({ status: 'success', data: { plan } });
+  }
+);
+
+export const getToursWithin = catchAsync(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const { distance, latlng, unit } = req.params;
+    const [lat, lng] = latlng.split(',');
+
+    // radius of earth in miles or kilometers
+    const radius = unit === 'mi' ? +distance / 3963.2 : +distance / 6378.1;
+
+    if (!lat || !lng) {
+      throw new AppError(
+        'Please provide latitude and longitude in the format lat,lng.',
+        400
+      );
+    }
+
+    const tours = await Tour.find({
+      startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+    });
+
+    res
+      .status(200)
+      .json({ status: 'success', results: tours.length, data: { tours } });
+  }
+);
+
+export const getDistances = catchAsync(
+  async (req: Request, res: Response, _next: NextFunction) => {
+    const { latlng, unit } = req.params;
+    const [lat, lng] = latlng.split(',');
+
+    if (!lat || !lng) {
+      throw new AppError(
+        'Please provide latitude and longitude in the format lat,lng.',
+        400
+      );
+    }
+
+    const distances = await Tour.aggregate([
+      {
+        $geoNear: {
+          near: {
+            type: 'Point',
+            coordinates: [+lng, +lat],
+          },
+          distanceField: 'distance',
+          distanceMultiplier: unit === 'mi' ? 0.000621371 : 0.001, // convert to miles or kilometers
+          key: 'startLocation',
+        },
+      },
+      {
+        $project: {
+          distance: 1,
+          name: 1,
+        },
+      },
+    ]);
+
+    res.status(200).json({ status: 'success', data: { data: distances } });
   }
 );

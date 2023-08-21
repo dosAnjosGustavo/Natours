@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
+import mongoose, { Aggregate } from 'mongoose';
 import slugify from 'slugify';
 
-const tourSchema = new mongoose.Schema(
+const tourSchema = new mongoose.Schema<TourDocument>(
   {
     name: {
       type: String,
@@ -113,6 +113,7 @@ const tourSchema = new mongoose.Schema(
 
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
 
 tourSchema.virtual('durationWeeks').get(function (this: any) {
   return this.duration / 7;
@@ -146,17 +147,13 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
-tourSchema.post(/^find/, function (next) {
-  // @ts-ignore
-  console.log(`Query took ${Date.now() - this.start} milliseconds`);
-  next();
-});
+tourSchema.pre('aggregate', function (this: any, next) {
+  if (this.pipeline()[0]?.$geoNear) return next();
 
-tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  console.log(this.pipeline());
+
   next();
 });
 
-const Tour = mongoose.model<any>('Tour', tourSchema);
+const Tour = mongoose.model<TourDocument>('Tour', tourSchema);
 export default Tour;

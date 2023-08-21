@@ -1,36 +1,8 @@
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import mongoose from 'mongoose';
 import Tour from './tourModel';
 import User from './userModel';
 
-interface ReviewType {
-  tour: {
-    _id: mongoose.Schema.Types.ObjectId;
-    name: string;
-  };
-  user: {
-    _id: mongoose.Schema.Types.ObjectId;
-    name: string;
-    photo: string;
-  };
-
-  review: string;
-  rating: number;
-  createdAt: Date;
-}
-
-interface ReviewModel extends mongoose.Model<ReviewType> {
-  calcAverageRatings(tourId: mongoose.Schema.Types.ObjectId): Promise<void>;
-}
-
-interface ReviewTypeMethods extends mongoose.Document {
-  review: string;
-  rating: number;
-  createdAt: Date;
-  tour: mongoose.Schema.Types.ObjectId;
-  user: mongoose.Schema.Types.ObjectId;
-}
-
-const reviewSchema = new mongoose.Schema<ReviewType>(
+const reviewSchema = new mongoose.Schema<ReviewDocument>(
   {
     review: {
       type: String,
@@ -61,6 +33,8 @@ const reviewSchema = new mongoose.Schema<ReviewType>(
     toObject: { virtuals: true },
   }
 );
+
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
 
 reviewSchema.pre(/^find/, function (next) {
   // @ts-ignore
@@ -93,9 +67,8 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
   });
 };
 
-reviewSchema.pre('save', async function (next) {
-  // @ts-ignore
-  this.constructor.calcAverageRatings(this.tour);
+reviewSchema.pre('save', async function (this: ReviewModel, next) {
+  this.constructor.calcAverageRatings(this.tour as string);
   next();
 });
 
@@ -103,5 +76,5 @@ reviewSchema.post(/^findOneAnd|save/, async function (docs) {
   if (docs.tour) await docs.constructor.calcAverageRatings(docs.tour);
 });
 
-const Review = mongoose.model('Review', reviewSchema);
+const Review = mongoose.model<ReviewDocument>('Review', reviewSchema);
 export default Review;

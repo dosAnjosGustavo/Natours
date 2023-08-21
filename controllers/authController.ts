@@ -1,5 +1,5 @@
 import { promisify } from 'util';
-import User from '../models/userModel';
+import User, { UserDocument } from '../models/userModel';
 import { Request, Response, NextFunction } from 'express';
 import catchAsync from '../utils/catchAsync';
 import jwt from 'jsonwebtoken';
@@ -89,10 +89,9 @@ export const protect = catchAsync(
       );
 
     // 2) Verification token
-    const { id, iat } = (await promisify(jwt.verify)(
+    const { id, iat } = (await promisify<string, string>(jwt.verify)(
       token,
-      // @ts-ignore
-      process.env.JWT_SECRET
+      process.env.JWT_SECRET as string
     )) as unknown as JWTLoginType;
 
     // 3) Check if user still exists
@@ -122,7 +121,7 @@ export const protect = catchAsync(
 );
 
 export const restrictTo = (...roles: string[]) => {
-  return (req: CustomRequest, res: Response, next: NextFunction) => {
+  return (req: CustomRequest, _res: Response, next: NextFunction) => {
     if (!roles.includes(req.user.role))
       return next(
         new AppError('You do not have permission to perform this action', 403)
@@ -152,7 +151,7 @@ export const forgotPassword = catchAsync(
 
     try {
       await sendEmail({
-        email: user.email,
+        email: user.email as string,
         subject: 'Your password reset token (valid for 10 min)',
         message,
       });
@@ -193,10 +192,10 @@ export const resetPassword = catchAsync(
     if (!user)
       return next(new AppError('Token is invalid or has expired', 400));
 
-    user.password = req.body.password;
-    user.passwordConfirm = req.body.passwordConfirm;
+    user.password = req.body.newPassword;
+    user.passwordConfirm = req.body.newPasswordConfirm;
     user.passwordResetToken = undefined;
-    user.passwordResetExpires = undefined;
+    user.passwordResetExpiresAt = undefined;
     await user.save();
 
     // 3) Update changedPasswordAt property for the user
@@ -212,13 +211,13 @@ export const updatePassword = catchAsync(
     const user = await User.findById(req.user.id).select('+password');
 
     // 2) Check if POSTed current password is correct
-    if (!(await user.correctPassword(req.body.passwordCurrent, user.password)))
+    if (!user?.correctPassword(req.body.passwordCurrent, user.password))
       return next(new AppError('Your current password is wrong.', 401));
 
     // 3) If so, update password
-    user.password = req.body.password;
-    user.passwordConfirm = req.body.passwordConfirm;
-    await user.save();
+    user.password = req.body.newPassword;
+    user.passwordConfirm = req.body.newPasswordConfirm;
+    await user?.save();
     // User.findByIdAndUpdate will NOT work as intended!
 
     // 4) Log user in, send JWT
