@@ -1,3 +1,4 @@
+import patch from 'path';
 import express from 'express';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
@@ -12,13 +13,36 @@ import globalErrorHandler from './controllers/errorController';
 import tourRouter from './routes/tourRoutes';
 import userRouter from './routes/userRoutes';
 import reviewRouter from './routes/reviewRoutes';
+import viewRouter from './routes/viewRoutes';
 import { ROOT, TOURS, USERS, REVIEWS } from './routes/variables';
 
 const app = express();
 
+app.set('view engine', 'pug');
+app.set('views', patch.join(__dirname, 'views'));
+
 // Global Middlewares
 // Set Security HTTP headers
-app.use(helmet());
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'", 'https://*.mapbox.com', 'https://*.stripe.com'],
+      baseUri: ["'self'"],
+      fontSrc: ["'self'", 'https:', 'data:'],
+      scriptSrc: [
+        "'self'",
+        'https://*.stripe.com',
+        'https://cdnjs.cloudflare.com',
+        'https://api.mapbox.com',
+        'https://js.stripe.com',
+        'blob:',
+      ],
+      frameSrc: ["'self'", 'https://*.stripe.com'],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  })
+);
 
 // Development logging
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
@@ -55,9 +79,11 @@ app.use(
 );
 
 // Serving static files
-app.use(express.static(`${__dirname}/public`));
+app.use(express.static(patch.join(__dirname, 'public')));
 
 // Routes
+
+app.use('/', viewRouter);
 app.use(ROOT + TOURS, tourRouter);
 app.use(ROOT + USERS, userRouter);
 app.use(ROOT + REVIEWS, reviewRouter);
