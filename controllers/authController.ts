@@ -1,5 +1,5 @@
 import { promisify } from 'util';
-import User, { UserDocument } from '../models/userModel';
+import User from '../models/userModel';
 import { Request, Response, NextFunction } from 'express';
 import catchAsync from '../utils/catchAsync';
 import jwt from 'jsonwebtoken';
@@ -76,12 +76,22 @@ export const login = catchAsync(
   }
 );
 
+export const logout = (_req: Request, res: Response) => {
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+
+  res.status(200).json({ status: 'success' });
+};
+
 export const protect = catchAsync(
   async (req: CustomRequest, _res: Response, next: NextFunction) => {
     // 1) Getting token and check of it's there
     let token: string | undefined;
     if (req.headers.authorization?.startsWith('Bearer'))
       token = req.headers.authorization.split(' ')[1];
+    else if (req.cookies.jwt) token = req.cookies.jwt;
 
     if (!token)
       return next(
@@ -119,6 +129,36 @@ export const protect = catchAsync(
     next();
   }
 );
+
+// Only for rendered pages, no errors!
+export const isLoggedIn = async (
+  req: CustomRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.cookies.jwt) {
+    try {
+      // Verification token
+      const { id, iat } = (await promisify<string, string>(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET as string
+      )) as unknown as JWTLoginType;
+
+      // Check if user still exists
+      const currentUser = await User.findById(id);
+      if (!currentUser) return next();
+
+      // Check if user changed password after the JWToken was issued
+      if (currentUser.changedPasswordAfter(iat)) return next();
+
+      // There is a logged in user
+      res.locals.user = currentUser;
+    } catch (err) {
+      return next();
+    }
+  }
+  next();
+};
 
 export const restrictTo = (...roles: string[]) => {
   return (req: CustomRequest, _res: Response, next: NextFunction) => {
