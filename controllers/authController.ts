@@ -86,7 +86,7 @@ export const logout = (_req: Request, res: Response) => {
 };
 
 export const protect = catchAsync(
-  async (req: CustomRequest, _res: Response, next: NextFunction) => {
+  async (req: CustomRequest, res: Response, next: NextFunction) => {
     // 1) Getting token and check of it's there
     let token: string | undefined;
     if (req.headers.authorization?.startsWith('Bearer'))
@@ -125,6 +125,7 @@ export const protect = catchAsync(
 
     // GRANT ACCESS TO PROTECTED ROUTE
     req.user = currentUser;
+    res.locals.user = currentUser;
 
     next();
   }
@@ -153,6 +154,7 @@ export const isLoggedIn = async (
 
       // There is a logged in user
       res.locals.user = currentUser;
+      req.user = currentUser;
     } catch (err) {
       return next();
     }
@@ -232,8 +234,8 @@ export const resetPassword = catchAsync(
     if (!user)
       return next(new AppError('Token is invalid or has expired', 400));
 
-    user.password = req.body.newPassword;
-    user.passwordConfirm = req.body.newPasswordConfirm;
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
     user.passwordResetToken = undefined;
     user.passwordResetExpiresAt = undefined;
     await user.save();
@@ -250,14 +252,16 @@ export const updatePassword = catchAsync(
     // 1) Get user from collection
     const user = await User.findById(req.user.id).select('+password');
 
+    if (user === null) return next(new AppError('User not found', 404));
+
     // 2) Check if POSTed current password is correct
-    if (!user?.correctPassword(req.body.passwordCurrent, user.password))
+    if (!(await user.correctPassword(req.body.passwordCurrent, user.password)))
       return next(new AppError('Your current password is wrong.', 401));
 
     // 3) If so, update password
-    user.password = req.body.newPassword;
-    user.passwordConfirm = req.body.newPasswordConfirm;
-    await user?.save();
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
+    await user.save();
     // User.findByIdAndUpdate will NOT work as intended!
 
     // 4) Log user in, send JWT

@@ -91,8 +91,8 @@ type UserDocument = {
   email: string;
   photo: string;
   role: Role;
-  newPassword: string;
-  newPasswordConfirm?: string;
+  password: string;
+  passwordConfirm?: string;
   passwordChangedAt?: Date;
   passwordResetToken?: string;
   passwordResetExpiresAt?: Date;
