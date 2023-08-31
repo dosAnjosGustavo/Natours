@@ -1,9 +1,44 @@
 import { CustomRequest } from '../@types/merged';
 import { Request, Response, NextFunction } from 'express';
+
+import multer from 'multer';
+import sharp from 'sharp';
+
 import User from '../models/userModel';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../utils/appError';
 import * as factory from './handlerFactory';
+
+const storage = multer.memoryStorage();
+
+const fileFilter = (
+  _req: CustomRequest,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
+  if (file.mimetype.startsWith('image')) cb(null, true);
+  else cb(new AppError('Not an image! Please upload only images.', 400));
+};
+
+const upload = multer({ storage, fileFilter });
+
+export const uploadUserPhoto = upload.single('photo');
+
+export const resizeUserPhoto = catchAsync(
+  async (req: CustomRequest, _res: Response, next: NextFunction) => {
+    if (!req.file) return next();
+
+    req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+
+    sharp(req.file.buffer)
+      .resize(500, 500)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(`public/img/users/${req.file.filename}`);
+
+    next();
+  }
+);
 
 // Route Handlers
 const filterObj = (obj: any, ...allowedFields: string[]) => {
@@ -36,6 +71,7 @@ export const updateMe = catchAsync(
 
     // 2) Filter out unwanted fields names that are not allowed to be updated
     const filteredBody = filterObj(req.body, 'name', 'email');
+    if (req.file) filteredBody.photo = req.file.filename;
 
     // 3) Update user document
     const updatedUser = await User.findByIdAndUpdate(
