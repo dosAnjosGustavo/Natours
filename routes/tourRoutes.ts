@@ -35,7 +35,12 @@ router
 router
   .route(ID)
   .get(tourController.getTour)
-  .patch(onlyAuthorized(['admin', 'lead-guide']), tourController.updateTour)
+  .patch(
+    onlyAuthorized(['admin', 'lead-guide']),
+    tourController.uploadTourImages,
+    tourController.resizeTourImages,
+    tourController.updateTour
+  )
   .delete(onlyAuthorized(['admin', 'lead-guide']), tourController.deleteTour);
 
 export default router;
