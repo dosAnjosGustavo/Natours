@@ -15,7 +15,11 @@ export const signToken = (id: string) => {
   return jwt.sign({ id }, jwtSecret, { expiresIn });
 };
 
-const createSendToken = (user: any, statusCode: number, res: Response) => {
+const createSendToken = (
+  user: UserDocument,
+  statusCode: number,
+  res: Response
+) => {
   const token = signToken(user._id);
 
   // Remove password from output
@@ -52,17 +56,9 @@ export const signup = catchAsync(
     });
 
     const url = `${req.protocol}://${req.get('host')}/me`;
-    console.log(url);
     await new Email(newUser, url).sendWelcome();
 
     createSendToken(newUser, 201, res);
-
-    res.status(201).json({
-      status: 'success',
-      data: {
-        user: newUser,
-      },
-    });
   }
 );
 
@@ -76,8 +72,6 @@ export const login = catchAsync(
 
     // 2) Check if user exists && password is correct
     const user = await User.findOne({ email }).select('+password');
-
-    console.log(user);
 
     if (!user || !(await user.correctPassword(password, user.password)))
       return next(new AppError('Incorrect email or password', 401));
@@ -229,8 +223,6 @@ export const resetPassword = catchAsync(
       .createHash('sha256')
       .update(req.params.token)
       .digest('hex');
-
-    console.log(hashedToken);
 
     const user = await User.findOne({
       passwordResetToken: hashedToken,

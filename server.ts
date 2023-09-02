@@ -32,16 +32,3 @@ process.on('unhandledRejection', (err: Error) => {
     process.exit(1); // 0 = success, 1 = uncaught exception
   });
 });
-
-// const server = https.createServer(app);
-// server.listen(port, () => {
-//   console.log(`Server running on port ${port}`);
-// });
-
-// process.on('unhandledRejection', (err: Error) => {
-//   console.log('UNHANDLED REJECTION! Shutting down...');
-//   console.log(err);
-//   server.close(() => {
-//     process.exit(1);
-//   });
-// });

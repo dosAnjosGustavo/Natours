@@ -34,8 +34,6 @@ export const uploadTourImages = upload.fields([
 
 export const resizeTourImages = catchAsync(
   async (req: CustomRequest, _res: Response, next: NextFunction) => {
-    console.log(req.files);
-
     if (!req.files.imageCover || !req.files?.images) return next();
 
     req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
@@ -60,8 +58,6 @@ export const resizeTourImages = catchAsync(
         req.body.images.push(filename);
       })
     );
-
-    console.log(req.body);
 
     next();
   }

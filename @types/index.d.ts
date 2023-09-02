@@ -87,11 +87,12 @@ type ReviewModel = ReviewDocument &
 type Role = 'user' | 'guide' | 'lead-guide' | 'admin';
 
 type UserDocument = {
+  _id: mongoose.Schema.Types.ObjectId;
   name: string;
   email: string;
   photo: string;
   role: Role;
-  password: string;
+  password: string | undefined;
   passwordConfirm?: string;
   passwordChangedAt?: Date;
   passwordResetToken?: string;
