@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
 
-type Role = 'user' | 'guide' | 'lead-guide' | 'admin';
 export type UserDocument = mongoose.Document & {
   name: string;
   email: string;
@@ -125,7 +124,7 @@ userSchema.methods.createPasswordResetToken = function () {
 
   console.log({ resetToken }, this.passwordResetToken);
 
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 1000 ms * 60 sec * 10 min
+  this.passwordResetExpiresAt = Date.now() + 10 * 60 * 1000; // 1000 ms * 60 sec * 10 min
 
   return resetToken;
 };

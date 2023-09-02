@@ -1,4 +1,4 @@
-import mongoose, { Aggregate } from 'mongoose';
+import mongoose from 'mongoose';
 import slugify from 'slugify';
 
 const tourSchema = new mongoose.Schema<TourDocument>(

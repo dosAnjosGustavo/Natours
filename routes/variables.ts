@@ -5,5 +5,6 @@ const TOURS = 'tours/';
 const ID = '/:id/';
 const USERS = 'users/';
 const REVIEWS = 'reviews/';
+const BOOKINGS = 'bookings/';
 
-export { version, ROOT, TOURS, ID, USERS, REVIEWS };
+export { version, ROOT, TOURS, ID, USERS, REVIEWS, BOOKINGS };

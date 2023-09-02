@@ -28,7 +28,7 @@ export const resizeUserPhoto = catchAsync(
   async (req: CustomRequest, _res: Response, next: NextFunction) => {
     if (!req.file) return next();
 
-    req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+    req.file.filename = `user-${req.user?.id}-${Date.now()}.jpeg`;
 
     await sharp(req.file.buffer)
       .resize(500, 500)
@@ -54,7 +54,7 @@ export const getMe = (
   _res: Response,
   next: NextFunction
 ) => {
-  req.params.id = req.user.id;
+  req.params.id = req.user?.id;
   next();
 };
 
@@ -75,7 +75,7 @@ export const updateMe = catchAsync(
 
     // 3) Update user document
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
+      req.user?.id,
       filteredBody,
       {
         new: true,
@@ -93,7 +93,7 @@ export const updateMe = catchAsync(
 // User deleting himself
 export const deleteMe = catchAsync(
   async (req: CustomRequest, res: Response, _next: NextFunction) => {
-    await User.findByIdAndUpdate(req.user.id, { active: false });
+    await User.findByIdAndUpdate(req.user?.id, { active: false });
 
     res.status(204).json({
       status: 'success',

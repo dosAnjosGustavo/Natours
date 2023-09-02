@@ -14,8 +14,9 @@ import globalErrorHandler from './controllers/errorController';
 import tourRouter from './routes/tourRoutes';
 import userRouter from './routes/userRoutes';
 import reviewRouter from './routes/reviewRoutes';
+import bookingRouter from './routes/bookingRoutes';
 import viewRouter from './routes/viewRoutes';
-import { ROOT, TOURS, USERS, REVIEWS } from './routes/variables';
+import { ROOT, TOURS, USERS, REVIEWS, BOOKINGS } from './routes/variables';
 
 const app = express();
 
@@ -29,7 +30,7 @@ app.use(
     directives: {
       defaultSrc: ["'self'", 'https://*.mapbox.com', 'https://*.stripe.com'],
       baseUri: ["'self'"],
-      fontSrc: ["'self'", 'https:', 'data:'],
+      // fontSrc: ["'self'", 'https:', 'data:'],
       scriptSrc: [
         "'self'",
         'https://*.stripe.com',
@@ -90,6 +91,7 @@ app.use('/', viewRouter);
 app.use(ROOT + TOURS, tourRouter);
 app.use(ROOT + USERS, userRouter);
 app.use(ROOT + REVIEWS, reviewRouter);
+app.use(ROOT + BOOKINGS, bookingRouter);
 
 app.all('*', (req, _res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
