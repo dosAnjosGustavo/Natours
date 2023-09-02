@@ -3,3 +3,4 @@ config.env
 .cache
 .parcel-cache
 .vscode
+public/js/bundled
