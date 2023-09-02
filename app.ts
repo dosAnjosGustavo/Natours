@@ -8,6 +8,7 @@ import mongoSanitize from 'express-mongo-sanitize';
 import xss from 'xss-clean';
 import hpp from 'hpp';
 import cookieParser from 'cookie-parser';
+import compression from 'compression';
 
 import AppError from './utils/appError';
 import globalErrorHandler from './controllers/errorController';
@@ -82,11 +83,12 @@ app.use(
   })
 );
 
+app.use(compression());
+
 // Serving static files
 app.use(express.static(patch.join(__dirname, 'public')));
 
 // Routes
-
 app.use('/', viewRouter);
 app.use(ROOT + TOURS, tourRouter);
 app.use(ROOT + USERS, userRouter);
