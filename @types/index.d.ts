@@ -37,7 +37,7 @@ type JWTLoginType = {
 };
 
 // Tour
-type TourDocument = mongoose.Document & {
+type TourDocument = {
   name: string;
   duration: number;
   maxGroupSize: number;
@@ -85,23 +85,3 @@ type ReviewModel = ReviewDocument &
 
 // User
 type Role = 'user' | 'guide' | 'lead-guide' | 'admin';
-
-type UserDocument = {
-  _id: mongoose.Schema.Types.ObjectId;
-  name: string;
-  email: string;
-  photo: string;
-  role: Role;
-  password: string | undefined;
-  passwordConfirm?: string;
-  passwordChangedAt?: Date;
-  passwordResetToken?: string;
-  passwordResetExpiresAt?: Date;
-  active: boolean;
-  correctPassword: (
-    candidatePassword: string,
-    userPassword: string
-  ) => Promise<boolean>;
-  changedPasswordAfter: (JWTTimestamp: number) => boolean;
-  createPasswordResetToken: () => string;
-};

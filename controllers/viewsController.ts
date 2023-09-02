@@ -2,6 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import catchAsync from '../utils/catchAsync';
 import Tour from '../models/tourModel';
 import AppError from '../utils/appError';
+import User from '../models/userModel';
+import { CustomRequest } from '../@types/merged';
+import Booking from '../models/bookingModel';
 
 export const getOverview = catchAsync(async (_req: Request, res: Response) => {
   const tours = await Tour.find();
@@ -50,23 +53,39 @@ export const signup = (_req: Request, res: Response) => {
   });
 };
 
-// export const updateUserData = catchAsync(
-//   async (req: CustomRequest, res: Response, _next: NextFunction) => {
-//     const user = await User.findByIdAndUpdate(
-//       req.user?.id,
-//       {
-//         name: req.body.name,
-//         email: req.body.email,
-//       },
-//       {
-//         new: true,
-//         runValidators: true,
-//       }
-//     );
+export const getMyTours = catchAsync(
+  async (req: CustomRequest, res: Response, _next: NextFunction) => {
+    // 1) Find all bookings for the current user
+    const bookings = await Booking.find({ user: req.user?.id });
 
-//     res.status(200).render('account', {
-//       title: 'Your account',
-//       user,
-//     });
-//   }
-// );
+    // 2) Find tours with the returned IDs
+    const tourIDs = bookings.map((el) => el.tour);
+    const tours = await Tour.find({ _id: { $in: tourIDs } });
+
+    res.status(200).render('overview', {
+      title: 'My Tours',
+      tours,
+    });
+  }
+);
+
+export const updateUserData = catchAsync(
+  async (req: CustomRequest, res: Response, _next: NextFunction) => {
+    const user = await User.findByIdAndUpdate(
+      req.user?.id,
+      {
+        name: req.body.name,
+        email: req.body.email,
+      },
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    res.status(200).render('account', {
+      title: 'Your account',
+      user,
+    });
+  }
+);

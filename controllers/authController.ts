@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import AppError from '../utils/appError';
 import Email from '../utils/email';
 import crypto from 'crypto';
-import { CustomRequest } from '../@types/merged';
+import { CustomRequest, UserDocument } from '../@types/merged';
 
 export const signToken = (id: string) => {
   const jwtSecret = process.env.JWT_SECRET!;
@@ -73,7 +73,7 @@ export const login = catchAsync(
     // 2) Check if user exists && password is correct
     const user = await User.findOne({ email }).select('+password');
 
-    if (!user || !(await user.correctPassword(password, user.password)))
+    if (!user || !(await user.correctPassword(password, user.password!)))
       return next(new AppError('Incorrect email or password', 401));
 
     // 3) If everything ok, send token to client
@@ -254,7 +254,7 @@ export const updatePassword = catchAsync(
     if (user === null) return next(new AppError('User not found', 404));
 
     // 2) Check if POSTed current password is correct
-    if (!(await user.correctPassword(req.body.passwordCurrent, user.password)))
+    if (!(await user.correctPassword(req.body.passwordCurrent, user.password!)))
       return next(new AppError('Your current password is wrong.', 401));
 
     // 3) If so, update password

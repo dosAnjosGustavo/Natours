@@ -2,25 +2,7 @@ import crypto from 'crypto';
 import mongoose from 'mongoose';
 import validator from 'validator';
 import bcrypt from 'bcryptjs';
-
-export type UserDocument = mongoose.Document & {
-  name: string;
-  email: string;
-  photo: string;
-  role: Role;
-  password: string;
-  passwordConfirm?: string;
-  passwordChangedAt?: Date;
-  passwordResetToken?: string;
-  passwordResetExpiresAt?: Date;
-  active: boolean;
-  correctPassword: (
-    candidatePassword: string,
-    userPassword: string
-  ) => Promise<boolean>;
-  changedPasswordAfter: (JWTTimestamp: number) => boolean;
-  createPasswordResetToken: () => string;
-};
+import { UserDocument } from '../@types/merged';
 
 const userSchema = new mongoose.Schema<UserDocument>({
   name: {
@@ -63,6 +45,7 @@ const userSchema = new mongoose.Schema<UserDocument>({
       message: 'Passwords are not the same!',
     },
   },
+
   passwordChangedAt: { type: Date },
   passwordResetToken: { type: String },
   passwordResetExpiresAt: { type: Date },
@@ -126,5 +109,6 @@ userSchema.methods.createPasswordResetToken = function () {
 
   return resetToken;
 };
+
 const User = mongoose.model<UserDocument>('User', userSchema);
 export default User;

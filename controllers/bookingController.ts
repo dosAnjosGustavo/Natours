@@ -1,8 +1,10 @@
-import { Response, NextFunction } from 'express';
+import { Response, NextFunction, Request } from 'express';
 import catchAsync from '../utils/catchAsync';
 import Tour from '../models/tourModel';
 import Stripe from 'stripe';
 import { CustomRequest } from '../@types/merged';
+import Booking from '../models/bookingModel';
+import * as factory from './handlerFactory';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-08-16',
@@ -16,11 +18,10 @@ export const getCheckoutSession = catchAsync(
     // 2) Create checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      success_url: `${req.protocol}://${req.get('host')}/`,
-      // `${req.protocol}://${req.get('host')}/my-tours/?tour=${
-      //   req.params.tourId
-      // }&user=${req.user.id}&price=${tour.price}`,
-      cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
+      success_url: `${req.protocol}://${req.get('host')}/?tour=${
+        req.params.tourId
+      }&user=${req.user?.id}&price=${tour?.price}`,
+      cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour?.slug}`,
       customer_email: req.user?.email,
       client_reference_id: req.params.tourId,
       mode: 'payment',
@@ -28,11 +29,11 @@ export const getCheckoutSession = catchAsync(
         {
           price_data: {
             currency: 'usd',
-            unit_amount: tour.price ? tour.price * 100 : 0,
+            unit_amount: tour?.price ? tour.price * 100 : 0,
             product_data: {
-              name: `${tour.name} Tour`,
-              description: tour.summary,
-              images: [`https://www.natours.dev/img/tours/${tour.imageCover}`],
+              name: `${tour?.name} Tour`,
+              description: tour?.summary,
+              images: [`https://www.natours.dev/img/tours/${tour?.imageCover}`],
             },
           },
           quantity: 1,
@@ -47,3 +48,21 @@ export const getCheckoutSession = catchAsync(
     });
   }
 );
+
+export const createBookingCheckout = catchAsync(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { tour, user, price } = req.query;
+
+    if (!tour || !user || !price) return next();
+
+    await Booking.create({ tour, user, price });
+
+    res.redirect(req.originalUrl.split('?')[0]);
+  }
+);
+
+export const createBooking = factory.createOne(Booking);
+export const getBooking = factory.getOne(Booking);
+export const getAllBookings = factory.getAll(Booking);
+export const updateBooking = factory.updateOne(Booking);
+export const deleteBooking = factory.deleteOne(Booking);
