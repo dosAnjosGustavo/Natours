@@ -5,13 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start:build": "tsc -w & tscp -w",
-    "start:run:dev": "NODE_ENV=development nodemon build/server.js",
     "start:run:prod": "NODE_ENV=production nodemon build/server.js",
-    "watch:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundled",
     "build:js": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled",
-    "start:dev": "npm run start:build && npm run start:run:dev && npm run watch:js",
-    "start": "npm run start:build && npm run start:run:dev && npm run build:js",
-    "deploy": "git add . && git commit -m Heroku && git push && git push heroku master"
+    "start": "npm run start:build && npm run start:run:dev && npm run build:js"
   },
   "author": "Gustavo dos Anjos",
   "license": "ISC",
