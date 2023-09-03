@@ -10,7 +10,7 @@
   ],
   "compilerOptions": {
     "outDir": "dist",
-    "rootDir": "../Natours",
+    "rootDir": "../",
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
     /* Projects */
