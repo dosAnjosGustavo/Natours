@@ -7,14 +7,13 @@
     "outDir": "dist"
   },
   "scripts": {
-    "start:build": "tsc -w & tscp -w",
-    "start:run:dev": "NODE_ENV=development nodemon server.js",
-    "start:run:prod": "NODE_ENV=production nodemon server.js",
+    "start:run:dev": "NODE_ENV=development nodemon server.ts",
+    "start:run:prod": "NODE_ENV=production nodemon server.ts",
     "debug": "ndb index.ts",
     "watch:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundled",
     "build:js": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled",
-    "start:dev": "npm run start:build & npm run start:run:dev & npm run watch:js",
-    "start": "npm run start:build & npm run start:run:dev & npm run build:js"
+    "start:dev": "npm run start:run:dev & npm run watch:js",
+    "start": "npm run start:run:dev & npm run build:js"
   },
   "author": "Gustavo dos Anjos",
   "license": "ISC",
