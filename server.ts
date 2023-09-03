@@ -9,7 +9,7 @@ process.on('uncaughtException', (err: Error) => {
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 dotenv.config({ path: './config.env' });
-import app from '.';
+import app from './app';
 
 // Connect to DB
 const DB = process.env.DATABASE!.replace(
