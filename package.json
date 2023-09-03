@@ -11,7 +11,7 @@
     "build:js": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled",
     "start:dev": "npm run start:build && npm run start:run:dev && npm run watch:js",
     "start": "npm run start:build && npm run start:run:dev && npm run build:js",
-    "deploy": "git add . && git commit -m Heroku && git push heroku master"
+    "deploy": "git add . && git commit -m Heroku && git push && git push heroku master"
   },
   "author": "Gustavo dos Anjos",
   "license": "ISC",
