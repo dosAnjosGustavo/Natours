@@ -9,7 +9,7 @@
   "scripts": {
     "start:build": "tsc -w & tscp -w",
     "start:run:dev": "NODE_ENV=development nodemon server.ts",
-    "start:run:prod": "NODE_ENV=production nodemon server.ts",
+    "start:run:prod": "NODE_ENV=production node server.js",
     "debug": "ndb index.ts",
     "watch:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundled",
     "build:js": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled",
