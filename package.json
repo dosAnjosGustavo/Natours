@@ -9,7 +9,7 @@
     "start:run:prod": "NODE_ENV=production nodemon build/index.js",
     "watch:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundled",
     "build:js": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled",
-    "start": "npm run start:build && npm run start:run:dev && npm run watch:js",
+    "start": "concurrently 'npm run start:build' 'npm run start:run:prod' 'npm run build:js'",
     "deploy": "git add . && git commit -m Heroku && git push heroku master"
   },
   "author": "Gustavo dos Anjos",
@@ -36,6 +36,7 @@
     "bcryptjs": "^2.4.3",
     "buffer": "^6.0.3",
     "compression": "^1.7.4",
+    "concurrently": "^8.2.1",
     "cookie-parser": "^1.4.6",
     "crypto-browserify": "^3.12.0",
     "dotenv": "^16.3.1",
