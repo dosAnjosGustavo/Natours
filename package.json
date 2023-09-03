@@ -13,8 +13,8 @@
     "debug": "ndb index.ts",
     "watch:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundled",
     "build:js": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled",
-    "start:dev": "npm run start:build npm run start:run:dev & npm run watch:js",
-    "start": "npm run start:build npm run start:run:dev & npm run build:js"
+    "start:dev": "npm run start:build & npm run start:run:dev & npm run watch:js",
+    "start": "npm run start:build & npm run start:run:dev & npm run build:js"
   },
   "author": "Gustavo dos Anjos",
   "license": "ISC",
