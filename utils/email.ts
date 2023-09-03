@@ -2,12 +2,6 @@ import nodemailer from 'nodemailer';
 import pug from 'pug';
 import { htmlToText } from 'nodemailer-html-to-text';
 
-// type Options = {
-//   email: string;
-//   subject: string;
-//   message: string;
-// };
-
 export default class Email {
   to: string;
   firstName: string;
