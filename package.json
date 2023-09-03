@@ -1,15 +1,15 @@
 {
   "name": "natours",
   "version": "1.0.0",
-  "description": "Learning node, express and mongoDB",
+  "description": "Built using modern technologies: typescript, node.js, express, mongoDB, mongoose and more.",
   "main": "server.js",
   "compilerOptions": {
     "outDir": "dist"
   },
   "scripts": {
-    "start:run:dev": "NODE_ENV=development nodemon server.ts",
-    "start:run:prod": "NODE_ENV=production nodemon server.ts",
-    "debug": "ndb index.ts",
+    "start:build": "tsc -w & tscp -w",
+    "start:run:dev": "NODE_ENV=development nodemon build/server.js",
+    "start:run:prod": "NODE_ENV=production nodemon build/server.js",
     "watch:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundled",
     "build:js": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled",
     "start:dev": "npm run start:run:dev & npm run watch:js",
