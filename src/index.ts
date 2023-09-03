@@ -1,5 +1,3 @@
-import https from 'https';
-
 process.on('uncaughtException', (err: Error) => {
   console.log('UNCAUGHT EXCEPTION! Shutting down...');
   console.log(err);
