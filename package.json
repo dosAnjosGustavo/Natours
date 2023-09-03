@@ -3,17 +3,12 @@
   "version": "1.0.0",
   "description": "Built using modern technologies: typescript, node.js, express, mongoDB, mongoose and more.",
   "main": "server.js",
-  "compilerOptions": {
-    "outDir": "dist"
-  },
   "scripts": {
-    "start:build": "tsc -w & tscp -w",
-    "start:run:dev": "NODE_ENV=development nodemon build/server.js",
-    "start:run:prod": "NODE_ENV=production nodemon build/server.js",
-    "watch:js": "parcel watch ./public/js/index.js --dist-dir ./public/js/bundled",
-    "build:js": "parcel build ./public/js/index.js --dist-dir ./public/js/bundled",
-    "start:dev": "npm run start:run:dev & npm run watch:js",
-    "start": "npm run start:run:dev & npm run build:js"
+    "start": "node dist/index.js",
+    "postinstall": "tsc",
+    "watch-node": "nodemon dist/index.js",
+    "watch-ts": "tsc -w",
+    "deploy": "git add . && git commit -m Heroku && git push heroku master"
   },
   "author": "Gustavo dos Anjos",
   "license": "ISC",
