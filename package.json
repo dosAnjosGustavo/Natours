@@ -7,11 +7,14 @@
     "outDir": "dist"
   },
   "scripts": {
-    "start": "node dist/index.js",
-    "postinstall": "tsc",
-    "watch-node": "nodemon dist/index.js",
-    "watch-ts": "tsc -w",
-    "deploy": "git add . && git commit -m Heroku && git push heroku master"
+    "start:build": "tsc -w & tscp -w",
+    "start:run:dev": "NODE_ENV=development nodemon build/index.js",
+    "start:run:prod": "NODE_ENV=production nodemon build/index.js",
+    "debug": "ndb index.ts",
+    "watch:js": "parcel watch ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "build:js": "parcel build ./public/js/index.js --out-dir ./public/js --out-file bundle.js",
+    "start": "concurrently 'npm run start:build' 'npm run start:run:dev' 'npm run watch:js'",
+    "start:prod": "concurrently 'npm run start:build' 'npm run start:run:prod' 'npm run build:js'"
   },
   "author": "Gustavo dos Anjos",
   "license": "ISC",
