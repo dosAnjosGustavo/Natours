@@ -1,7 +1,12 @@
 import axios from 'axios';
 import { showAlert } from './alerts';
 
-export const signup = async (name, email, password, passwordConfirm) => {
+export const signup = async (
+  name: string,
+  email: string,
+  password: String,
+  passwordConfirm: String
+) => {
   try {
     const res = await axios({
       method: 'POST',
@@ -15,7 +20,7 @@ export const signup = async (name, email, password, passwordConfirm) => {
         location.assign('/');
       }, 1500);
     }
-  } catch (err) {
+  } catch (err: any) {
     showAlert('error', err.response.data.message);
   }
 };

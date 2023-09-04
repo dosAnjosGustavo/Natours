@@ -2,7 +2,7 @@ import axios from 'axios';
 import { showAlert } from './alerts';
 
 // type is either 'password' or 'data'
-export const updateSettings = async (data, type) => {
+export const updateSettings = async (data: any, type: string) => {
   try {
     const url =
       type === 'password'
@@ -20,10 +20,10 @@ export const updateSettings = async (data, type) => {
     if (res.data.status === 'success') {
       showAlert('success', `${typeCapitalized} updated successfully!`);
       window.setTimeout(() => {
-        location.reload(true);
+        location.reload();
       }, 1500);
     }
-  } catch (err) {
+  } catch (err: any) {
     showAlert('error', err.response.data.message);
   }
 };
