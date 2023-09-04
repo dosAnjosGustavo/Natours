@@ -9,13 +9,13 @@
     }
   },
   "scripts": {
-    "start:build": "tsc -w & tscp -w",
+    "start:build": "tsc & tscp",
     "start:run:dev": "NODE_ENV=development node ./build/index.js",
     "start:run:prod": "NODE_ENV=production node ./build/index.js",
     "watch:js": "parcel serve ./build/public/js/index.js --dist-dir ./build/public/js/bundled/",
     "build:js": "parcel build ./build/public/js/index.js --dist-dir ./build/public/js/bundled/",
     "start": "npm run start:build && concurrently 'npm run start:run:prod' 'npm run build:js'",
-    "start:dev": "concurrently 'npm run start:build' 'npm run start:run:dev' 'npm run watch:js'",
+    "start:dev": "concurrently 'npm run start:build' 'sleep 30 && npm run start:run:dev' 'sleep 30 && npm run watch:js'",
     "deploy": "git add . & git commit -m heroku & git push heroku master"
   },
   "author": "Gustavo dos Anjos",
