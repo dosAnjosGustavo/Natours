@@ -7,7 +7,7 @@
     "start:run:prod": "NODE_ENV=production nodemon ./src/index.ts",
     "watch:js": "parcel serve ./src/public/js/index.js --dist-dir ./src/public/js/bundled/",
     "build:js": "parcel build ./src/public/js/index.js --dist-dir ./src/public/js/bundled/",
-    "start": "concurrently 'npm run start:run:prod' 'npm run build:js'",
+    "start": "npm run start:run:prod",
     "start:dev": "concurrently 'npm run start:run:dev' 'npm run watch:js'",
     "deploy": "git add . & git commit -m heroku & git push heroku master"
   },
