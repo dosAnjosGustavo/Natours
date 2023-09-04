@@ -9,8 +9,8 @@
     "./src/models/userModel.ts"
   ],
   "compilerOptions": {
-    "rootDir": "./src",
-    "outDir": "./build",
+    "rootDir": "./",
+    "outDir": "./src",
     /* Visit https://aka.ms/tsconfig to read more about this file */
 
     /* Projects */

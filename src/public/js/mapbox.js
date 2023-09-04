@@ -1,6 +1,6 @@
 import mapboxgl from 'mapbox-gl';
 
-export const displayMap = (locations: any) => {
+export const displayMap = (locations) => {
   mapboxgl.accessToken =
     'pk.eyJ1IjoiZG9zYW5qb3NndXN0YXZvIiwiYSI6ImNsbHBmbm15NTA1NWIza2xpMWo4bDlwcTIifQ.vPBJ5o4Txtu9VMAUIjggcQ';
 
@@ -12,7 +12,7 @@ export const displayMap = (locations: any) => {
 
   const bounds = new mapboxgl.LngLatBounds();
 
-  locations.forEach((loc: any) => {
+  locations.forEach((loc) => {
     const element = document.createElement('div');
     element.className = 'marker';
 
