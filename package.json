@@ -9,11 +9,10 @@
     }
   },
   "scripts": {
-    "start:build": "tsc -w & tscp -w",
-    "start:run:dev": "NODE_ENV=development nodemon ./src/index.ts",
-    "start:run:prod": "NODE_ENV=production nodemon ./src/index.ts",
-    "watch:js": "parcel serve ./src/public/js/index.ts --dist-dir ./busrcild/public/js/bundled/",
-    "build:js": "parcel build ./src/public/js/index.ts --dist-dir ./src/public/js/bundled/",
+    "start:run:dev": "NODE_ENV=development nodemon ./src/index.js",
+    "start:run:prod": "NODE_ENV=production nodemon ./src/index.js",
+    "watch:js": "parcel serve ./src/public/js/index.js --dist-dir ./busrcild/public/js/bundled/",
+    "build:js": "parcel build ./src/public/js/index.js --dist-dir ./src/public/js/bundled/",
     "start": "concurrently 'npm run start:run:prod' 'npm run build:js'",
     "start:dev": "concurrently 'npm run start:run:dev' 'npm run watch:js'",
     "deploy": "git add . & git commit -m heroku & git push heroku master"
