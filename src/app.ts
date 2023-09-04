@@ -21,6 +21,8 @@ import { ROOT, TOURS, USERS, REVIEWS, BOOKINGS } from './routes/variables';
 
 const app = express();
 
+app.enable('trust proxy');
+
 app.set('view engine', 'pug');
 app.set('views', patch.join(__dirname, 'views'));
 
