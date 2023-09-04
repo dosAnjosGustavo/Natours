@@ -27,10 +27,10 @@ app.set('view engine', 'pug');
 app.set('views', patch.join(__dirname, 'views'));
 
 // Global Middlewares
-// Access-Control-Allow-Origin *
-app.use(cors());
+// // Access-Control-Allow-Origin *
+// app.use(cors());
 
-app.options('*', cors());
+// app.options('*', cors());
 
 // Serving static files
 app.use(express.static(patch.join(__dirname, 'public')));
