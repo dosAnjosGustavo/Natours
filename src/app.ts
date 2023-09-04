@@ -9,6 +9,7 @@ import xss from 'xss-clean';
 import hpp from 'hpp';
 import cookieParser from 'cookie-parser';
 import compression from 'compression';
+import cors from 'cors';
 
 import AppError from './utils/appError';
 import globalErrorHandler from './controllers/errorController';
@@ -27,6 +28,14 @@ app.set('view engine', 'pug');
 app.set('views', patch.join(__dirname, 'views'));
 
 // Global Middlewares
+// Access-Control-Allow-Origin *
+app.use(cors());
+
+app.options('*', cors());
+
+// Serving static files
+app.use(express.static(patch.join(__dirname, 'public')));
+
 // Set Security HTTP headers
 app.use(
   helmet.contentSecurityPolicy({
@@ -86,9 +95,6 @@ app.use(
 );
 
 app.use(compression());
-
-// Serving static files
-app.use(express.static(patch.join(__dirname, 'public')));
 
 // Routes
 app.use('/', viewRouter);
