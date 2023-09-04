@@ -10,6 +10,7 @@ dotenv.config({ path: './config.env' });
 import app from './app';
 
 // Connect to DB
+
 const DB = process.env.DATABASE!.replace(
   '<PASSWORD>',
   process.env.DATABASE_PASSWORD!
