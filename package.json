@@ -2,7 +2,7 @@
   "name": "natours",
   "version": "1.0.0",
   "description": "Built using modern technologies: typescript, node.js, express, mongoDB, mongoose and more.",
-  "main": "./src/index.ts",
+  "main": "./src/index.js",
   "targets": {
     "default": {
       "distDir": "./src/public/js/bundled/"
