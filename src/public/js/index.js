@@ -1,4 +1,4 @@
-import 'core-js/stable';
+import '@babel/polyfill';
 import { login, logout } from './login';
 import { displayMap } from './mapbox';
 import { updateSettings } from './updateSettings';
