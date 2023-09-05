@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import Tour from './tourModel';
 import User from './userModel';
 
-const bookingSchema = new mongoose.Schema({
+const bookingSchema = new mongoose.Schema<BookingDocument>({
   tour: {
     type: mongoose.Schema.Types.ObjectId,
     ref: Tour,

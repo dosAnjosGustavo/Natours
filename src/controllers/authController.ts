@@ -28,8 +28,9 @@ const createSendToken = (
 
   res.cookie('jwt', token, {
     expires: new Date(Date.now() + jwtCookiesExpiresIn * oneDay),
-    secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+    secure: req.secure || req.get('x-forwarded-proto') === 'https',
     httpOnly: true,
+    sameSite: 'none',
   });
 
   // Remove password from output

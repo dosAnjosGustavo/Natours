@@ -85,3 +85,11 @@ type ReviewModel = ReviewDocument &
 
 // User
 type Role = 'user' | 'guide' | 'lead-guide' | 'admin';
+
+type BookingDocument = {
+  tour: mongoose.Schema.Types.ObjectId | string;
+  user: mongoose.Schema.Types.ObjectId;
+  price: number;
+  createdAt?: Date;
+  paid?: boolean;
+};
