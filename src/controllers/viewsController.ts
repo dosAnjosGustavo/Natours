@@ -6,6 +6,16 @@ import User from '../models/userModel';
 import { CustomRequest } from '../@types/merged';
 import Booking from '../models/bookingModel';
 
+export const alerts = (req: Request, res: Response, next: NextFunction) => {
+  const { alert } = req.query;
+
+  if (alert === 'booking')
+    res.locals.alert =
+      "Your booking was successful! Please check your email for a confirmation.\nIf your booking doesn't show up here immediatly, please come back later.";
+
+  next();
+};
+
 export const getOverview = catchAsync(async (_req: Request, res: Response) => {
   const tours = await Tour.find();
 
