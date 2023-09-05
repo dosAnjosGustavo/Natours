@@ -53,11 +53,7 @@ const createBookingCheckout = async (session: Stripe.Checkout.Session) => {
 
   const user = (await User.findOne({ email: session.customer_email }))?.id;
 
-  const price_data =
-    session.line_items as unknown as Stripe.Checkout.SessionCreateParams.LineItem[];
-
-  console.log(session);
-  const price = price_data[0]?.price_data?.unit_amount! / 100;
+  const price = session.amount_total! / 100;
 
   await Booking.create({ tour, user, price });
 };
