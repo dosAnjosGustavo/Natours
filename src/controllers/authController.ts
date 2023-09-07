@@ -30,7 +30,6 @@ const createSendToken = (
     expires: new Date(Date.now() + jwtCookiesExpiresIn * oneDay),
     secure: req.secure || req.get('x-forwarded-proto') === 'https',
     httpOnly: true,
-    sameSite: 'none',
   });
 
   // Remove password from output
