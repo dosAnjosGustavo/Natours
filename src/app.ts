@@ -22,8 +22,6 @@ import * as bookingController from './controllers/bookingController';
 
 const app = express();
 
-app.enable('trust proxy');
-
 app.set('view engine', 'pug');
 app.set('views', patch.join(__dirname, 'views'));
 
