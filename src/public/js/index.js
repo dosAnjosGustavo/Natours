@@ -90,7 +90,7 @@ if (signupForm)
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const passwordConfirm = document.getElementById('passwordConfi.').value;
+    const passwordConfirm = document.getElementById('passwordConfirm').value;
 
     const btn = document.querySelector('.btn');
     btn.textContent = 'Signing up...';
